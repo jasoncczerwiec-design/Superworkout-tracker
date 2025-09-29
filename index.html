@@ -9,10 +9,319 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
-        /* [The full CSS from the app previously provided is here, trimmed for clarity] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .input-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .workout-list {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .workout-list h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .workout-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+        .workout-item:hover {
+            transform: translateX(5px);
+        }
+        .workout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .workout-title {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+        .workout-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .workout-details {
+            color: #555;
+            margin-top: 8px;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
-    <!-- [App content. I'll re-paste the full code on request] -->
+    <div class="container">
+        <h1>💪 Workout Tracker</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalWorkouts">0</div>
+                <div class="stat-label">Total Workouts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTime">0</div>
+                <div class="stat-label">Total Minutes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="thisWeek">0</div>
+                <div class="stat-label">This Week</div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h2 style="margin-bottom: 20px; color: #333;">Add New Workout</h2>
+            <form id="workoutForm">
+                <div class="form-group">
+                    <label for="exerciseType">Exercise Type</label>
+                    <select id="exerciseType" required>
+                        <option value="">Select exercise...</option>
+                        <option value="Running">Running</option>
+                        <option value="Cycling">Cycling</option>
+                        <option value="Swimming">Swimming</option>
+                        <option value="Weight Training">Weight Training</option>
+                        <option value="Yoga">Yoga</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="Walking">Walking</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="duration">Duration (minutes)</label>
+                    <input type="number" id="duration" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="intensity">Intensity</label>
+                    <select id="intensity" required>
+                        <option value="">Select intensity...</option>
+                        <option value="Low">Low</option>
+                        <option value="Moderate">Moderate</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes (optional)</label>
+                    <input type="text" id="notes" placeholder="Add any notes...">
+                </div>
+                <button type="submit">Add Workout</button>
+            </form>
+        </div>
+
+        <div class="workout-list">
+            <h2>Workout History</h2>
+            <div id="workoutHistory">
+                <div class="empty-state">No workouts yet. Start tracking!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let workouts = JSON.parse(localStorage.getItem('workouts')) || [];
+
+        function saveWorkouts() {
+            localStorage.setItem('workouts', JSON.stringify(workouts));
+        }
+
+        function updateStats() {
+            const totalWorkouts = workouts.length;
+            const totalTime = workouts.reduce((sum, w) => sum + parseInt(w.duration), 0);
+            
+            const now = new Date();
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const thisWeek = workouts.filter(w => new Date(w.date) >= weekAgo).length;
+
+            document.getElementById('totalWorkouts').textContent = totalWorkouts;
+            document.getElementById('totalTime').textContent = totalTime;
+            document.getElementById('thisWeek').textContent = thisWeek;
+        }
+
+        function displayWorkouts() {
+            const historyDiv = document.getElementById('workoutHistory');
+            
+            if (workouts.length === 0) {
+                historyDiv.innerHTML = '<div class="empty-state">No workouts yet. Start tracking!</div>';
+                return;
+            }
+
+            const sortedWorkouts = workouts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            historyDiv.innerHTML = sortedWorkouts.map((workout, index) => `
+                <div class="workout-item">
+                    <div class="workout-header">
+                        <div>
+                            <div class="workout-title">${workout.type}</div>
+                            <div class="workout-date">${new Date(workout.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteWorkout(${index})">Delete</button>
+                    </div>
+                    <div class="workout-details">
+                        ⏱️ ${workout.duration} minutes | 🔥 ${workout.intensity} intensity
+                        ${workout.notes ? '<br>📝 ' + workout.notes : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteWorkout(index) {
+            const sortedWorkouts = workouts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const workoutToDelete = sortedWorkouts[index];
+            const originalIndex = workouts.indexOf(workoutToDelete);
+            workouts.splice(originalIndex, 1);
+            saveWorkouts();
+            displayWorkouts();
+            updateStats();
+        }
+
+        document.getElementById('workoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const workout = {
+                type: document.getElementById('exerciseType').value,
+                duration: document.getElementById('duration').value,
+                intensity: document.getElementById('intensity').value,
+                notes: document.getElementById('notes').value,
+                date: new Date().toISOString()
+            };
+            
+            workouts.push(workout);
+            saveWorkouts();
+            displayWorkouts();
+            updateStats();
+            
+            this.reset();
+            
+            // Show success feedback
+            const btn = this.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Added!';
+            btn.style.background = '#27ae60';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 2000);
+        });
+
+        // Initialize on page load
+        displayWorkouts();
+        updateStats();
+
+        // Register service worker if available
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
 </body>
 </html>
